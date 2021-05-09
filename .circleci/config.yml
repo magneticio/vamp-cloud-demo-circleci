@@ -1,0 +1,39 @@
+version: 2.1
+
+orbs:
+  gcp-gke: circleci/gcp-gke@1.1.0
+
+parameters:
+  rollback:
+    type: boolean
+    default: false
+  version:
+    type: string
+    default: ""
+  kubernetes_cluster:
+    type: string
+    default: dev-orbtest-gs
+  kubernetes_namespace:
+    type: string
+    default: production
+
+jobs:
+  delete-deployment:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - gcp-gke/update-kubeconfig-with-credentials:
+          cluster: << pipeline.parameters.kubernetes_cluster >>
+          install-kubectl: true
+          perform-login: true
+      - checkout
+      - run:
+          name: Deleting YAML
+          command: |
+            kubectl delete -f particles-v<< pipeline.parameters.version >>.yaml -n << pipeline.parameters.kubernetes_namespace >> --ignore-not-found
+
+workflows:
+  rollback:
+    when: << pipeline.parameters.rollback >>
+    jobs:
+      - delete-deployment
