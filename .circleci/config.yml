@@ -4,7 +4,7 @@ orbs:
   gcp-gke: circleci/gcp-gke@1.1.0
 
 parameters:
-  rollback:
+  delete:
     type: boolean
     default: false
   version:
@@ -33,7 +33,7 @@ jobs:
             kubectl delete -f particles-v<< pipeline.parameters.version >>.yaml -n << pipeline.parameters.kubernetes_namespace >> --ignore-not-found
 
 workflows:
-  rollback:
-    when: << pipeline.parameters.rollback >>
+  delete:
+    when: << pipeline.parameters.delete >>
     jobs:
       - delete-deployment
