@@ -33,6 +33,7 @@ jobs:
             kubectl delete -f particles-v<< pipeline.parameters.version >>.yaml -n << pipeline.parameters.kubernetes_namespace >> --ignore-not-found
 
 workflows:
+  version: 2
   delete:
     when: << pipeline.parameters.delete >>
     jobs:
