@@ -28,7 +28,7 @@ jobs:
           perform-login: true
       - checkout
       - run:
-          name: Deleting YAML
+          name: Deleting Deployment
           command: |
             kubectl delete -f particles-v<< pipeline.parameters.version >>.yaml -n << pipeline.parameters.kubernetes_namespace >> --ignore-not-found
 
