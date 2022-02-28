@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Update Deployment
           command: |
-            kubectl apply -f particles-v1.0.0.yaml -n << pipeline.parameters.kubernetes_namespace >>
+            kubectl apply -f particles-v1.0.1.yaml -n << pipeline.parameters.kubernetes_namespace >>
 
   delete-deployment:
     docker:
