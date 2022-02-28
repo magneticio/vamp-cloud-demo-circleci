@@ -12,12 +12,26 @@ parameters:
     default: ""
   kubernetes_cluster:
     type: string
-    default: dev-orbtest-gs
+    default: contentful-debug
   kubernetes_namespace:
     type: string
     default: production
 
 jobs:
+  update-deployment:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - gcp-gke/update-kubeconfig-with-credentials:
+          cluster: << pipeline.parameters.kubernetes_cluster >>
+          install-kubectl: true
+          perform-login: true
+      - checkout
+      - run:
+          name: Update Deployment
+          command: |
+            kubectl apply -f particles-v1.0.0.yaml -n << pipeline.parameters.kubernetes_namespace >>
+
   delete-deployment:
     docker:
       - image: cimg/base:stable
@@ -34,6 +48,11 @@ jobs:
 
 workflows:
   version: 2
+  update:
+    when:
+      not: << pipeline.parameters.delete >>
+    jobs:
+      - update-deployment
   delete:
     when: << pipeline.parameters.delete >>
     jobs:
